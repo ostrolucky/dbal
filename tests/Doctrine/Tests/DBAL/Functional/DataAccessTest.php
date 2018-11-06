@@ -5,6 +5,8 @@ namespace Doctrine\Tests\DBAL\Functional;
 use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Mysqli\Driver as MySQLiDriver;
+use Doctrine\DBAL\Driver\PDOOracle\Driver as PDOOracleDriver;
+use Doctrine\DBAL\Driver\PDOSqlsrv\Driver as PDOSQLSRVDriver;
 use Doctrine\DBAL\Driver\SQLSrv\Driver as SQLSrvDriver;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\DBAL\ParameterType;
@@ -896,10 +898,16 @@ class DataAccessTest extends DbalFunctionalTestCase
      */
     public function testFetchColumnNonExistingIndex()
     {
-        if ($this->connection->getDriver()->getName() === 'pdo_sqlsrv') {
-            $this->markTestSkipped(
+        $driver = $this->connection->getDriver();
+
+        if ($driver instanceof PDOSQLSRVDriver) {
+            $this->markTestIncomplete(
                 'Test does not work for pdo_sqlsrv driver as it throws a fatal error for a non-existing column index.'
             );
+        }
+
+        if ($driver instanceof PDOOracleDriver) {
+            $this->markTestIncomplete('Disabled due to https://bugs.php.net/bug.php?id=77118');
         }
 
         self::assertNull(
