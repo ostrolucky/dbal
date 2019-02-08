@@ -138,7 +138,7 @@ abstract class AbstractAsset
             return $this->_namespace . '.' . $this->_name;
         }
 
-        return $this->_name;
+        return $this->_name ?? '';
     }
 
     /**
